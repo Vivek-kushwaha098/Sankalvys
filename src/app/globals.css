@@ -1,26 +1,279 @@
 @import "tailwindcss";
 
+/* ========================================
+   SANKALVYS DESIGN SYSTEM
+   ======================================== */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Backgrounds */
+  --bg-base: #F9F8F6;
+  --bg-surface: #FFFFFF;
+  --bg-elevated: #FFFFFF;
+  --bg-dark: #21201A;
+  --bg-muted: #F3F2EE;
+  --bg-hover: #F0EFEB;
+
+  /* Text */
+  --text-primary: #37352F;
+  --text-secondary: #49473F;
+  --text-tertiary: #787672;
+  --text-inverse: #FFFFFF;
+  --text-muted: #9B9A97;
+
+  /* Borders */
+  --border-default: #E3E2DE;
+  --border-subtle: #EEEDEA;
+  --border-strong: #D1D0CC;
+
+  /* Accents */
+  --accent-sage: #4B7C59;
+  --accent-sage-light: #B7ECC2;
+  --accent-sage-muted: #E8F5E9;
+  --accent-sage-hover: #3D6A4A;
+  --accent-streak: #D97706;
+  --accent-streak-light: #FEF3C7;
+  --accent-error: #BA1A1A;
+  --accent-error-light: #FFDAD6;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 2px 8px rgba(0,0,0,0.06);
+  --shadow-lg: 0 4px 16px rgba(0,0,0,0.08);
+
+  /* Radii */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-full: 9999px;
+
+  /* Navigation */
+  --nav-height: 64px;
+  --bottom-nav-height: 72px;
+  --sidebar-width: 240px;
+}
+
+[data-theme="dark"] {
+  --bg-base: #1A1A1A;
+  --bg-surface: #242424;
+  --bg-elevated: #2C2C2C;
+  --bg-dark: #111111;
+  --bg-muted: #2A2A2A;
+  --bg-hover: #333333;
+
+  --text-primary: #E8E6E3;
+  --text-secondary: #B8B5B0;
+  --text-tertiary: #8A8884;
+  --text-inverse: #1A1A1A;
+  --text-muted: #6B6966;
+
+  --border-default: #3A3A3A;
+  --border-subtle: #2E2E2E;
+  --border-strong: #4A4A4A;
+
+  --accent-sage: #6BA37A;
+  --accent-sage-light: #2A4A32;
+  --accent-sage-muted: #1F3527;
+  --accent-sage-hover: #7EB78D;
+  --accent-streak: #F59E0B;
+  --accent-streak-light: #3D2E0A;
+  --accent-error: #FF6B6B;
+  --accent-error-light: #3D1A1A;
+
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.2);
+  --shadow-md: 0 2px 8px rgba(0,0,0,0.3);
+  --shadow-lg: 0 4px 16px rgba(0,0,0,0.4);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* Colors */
+  --color-bg-base: var(--bg-base);
+  --color-bg-surface: var(--bg-surface);
+  --color-bg-elevated: var(--bg-elevated);
+  --color-bg-dark: var(--bg-dark);
+  --color-bg-muted: var(--bg-muted);
+  --color-bg-hover: var(--bg-hover);
+
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-tertiary: var(--text-tertiary);
+  --color-text-inverse: var(--text-inverse);
+  --color-text-muted: var(--text-muted);
+
+  --color-border-default: var(--border-default);
+  --color-border-subtle: var(--border-subtle);
+  --color-border-strong: var(--border-strong);
+
+  --color-sage: var(--accent-sage);
+  --color-sage-light: var(--accent-sage-light);
+  --color-sage-muted: var(--accent-sage-muted);
+  --color-sage-hover: var(--accent-sage-hover);
+  --color-streak: var(--accent-streak);
+  --color-streak-light: var(--accent-streak-light);
+  --color-error: var(--accent-error);
+  --color-error-light: var(--accent-error-light);
+
+  /* Font */
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+
+  /* Shadows */
+  --shadow-card: var(--shadow-sm);
+  --shadow-dropdown: var(--shadow-md);
+  --shadow-modal: var(--shadow-lg);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* ========================================
+   BASE STYLES
+   ======================================== */
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  height: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  min-height: 100%;
+  background-color: var(--bg-base);
+  color: var(--text-primary);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+/* ========================================
+   SCROLLBAR
+   ======================================== */
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* ========================================
+   ANIMATIONS
+   ======================================== */
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes checkmark {
+  0% { transform: scale(0.8); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+@keyframes progressFill {
+  from { width: 0%; }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.2s ease-out;
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.3s ease-out;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.35s ease-out;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.2s ease-out;
+}
+
+.animate-check {
+  animation: checkmark 0.3s ease-out;
+}
+
+.animate-progress {
+  animation: progressFill 0.6s ease-out;
+}
+
+/* ========================================
+   SKELETON LOADING
+   ======================================== */
+
+.skeleton {
+  background: linear-gradient(90deg, var(--bg-muted) 25%, var(--bg-hover) 50%, var(--bg-muted) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: var(--radius-sm);
+}
+
+/* ========================================
+   FOCUS
+   ======================================== */
+
+:focus-visible {
+  outline: 2px solid var(--accent-sage);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ========================================
+   SELECTION
+   ======================================== */
+
+::selection {
+  background-color: var(--accent-sage-light);
+  color: var(--text-primary);
 }
