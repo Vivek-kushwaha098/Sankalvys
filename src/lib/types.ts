@@ -29,10 +29,19 @@ export type MoodTag =
   | 'Grateful'
   | 'Motivated';
 
+export type Occupation = 'Student' | 'Employee' | 'Worker' | 'Freelancer' | 'Business Owner' | 'Other';
+
+export type Gender = 'Male' | 'Female' | 'Non-binary' | 'Prefer not to say' | 'Other';
+
 export interface User {
   id: string;
   name: string;
   email: string;
+  phone: string;
+  age: number;
+  dob?: string;
+  gender?: Gender;
+  occupation: Occupation;
   avatarUrl?: string;
   createdAt: string;
   role: 'user' | 'admin';

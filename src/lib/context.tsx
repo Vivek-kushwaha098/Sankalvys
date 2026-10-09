@@ -14,6 +14,8 @@ import {
   HabitCategory,
   HabitFrequency,
   TimeOfDay,
+  Occupation,
+  Gender,
 } from '@/lib/types';
 import * as store from '@/lib/store';
 import { format } from 'date-fns';
@@ -22,7 +24,7 @@ interface AppContextType {
   // Auth
   user: User | null;
   isAuthenticated: boolean;
-  login: (name: string, email: string) => void;
+  login: (name: string, email: string, phone?: string, age?: number, occupation?: Occupation, dob?: string, gender?: Gender) => void;
   logout: () => void;
 
   // Settings
@@ -103,10 +105,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     document.documentElement.setAttribute('data-theme', settings.darkMode ? 'dark' : 'light');
   }, [settings.darkMode, mounted]);
 
-  const login = useCallback((name: string, email: string) => {
+  const login = useCallback((name: string, email: string, phone?: string, age?: number, occupation?: Occupation, dob?: string, gender?: Gender) => {
     let u = store.getUser();
     if (!u || u.email !== email) {
-      u = store.createUser(name, email);
+      u = store.createUser(name, email, phone || '', age || 0, occupation || 'Other', dob || '', gender || 'Prefer not to say');
       // Seed demo data for new users
       store.seedDemoData();
     }

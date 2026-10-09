@@ -18,6 +18,8 @@ import {
   DayCompletion,
   AnalyticsData,
   HabitCategory,
+  Occupation,
+  Gender,
 } from './types';
 import { format, subDays, startOfMonth, endOfMonth, eachDayOfInterval, isToday, parseISO, differenceInDays, isSameDay, startOfWeek, endOfWeek, addDays } from 'date-fns';
 
@@ -56,11 +58,24 @@ export function setUser(user: User): void {
   setItem('user', user);
 }
 
-export function createUser(name: string, email: string): User {
+export function createUser(
+  name: string,
+  email: string,
+  phone: string = '',
+  age: number = 0,
+  occupation: Occupation = 'Other',
+  dob: string = '',
+  gender: Gender = 'Prefer not to say'
+): User {
   const user: User = {
     id: uuidv4(),
     name,
     email,
+    phone,
+    age,
+    dob,
+    gender,
+    occupation,
     createdAt: new Date().toISOString(),
     role: 'user',
   };

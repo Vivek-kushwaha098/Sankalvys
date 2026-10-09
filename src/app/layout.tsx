@@ -14,6 +14,10 @@ export const metadata: Metadata = {
   description: "Your daily sanctuary for intentional habits and calm momentum. Build lasting habits with mindful tracking, streaks, analytics, and daily reflections.",
   keywords: ["habit tracker", "productivity", "mindfulness", "daily routines", "streak tracker"],
   authors: [{ name: "Sankalvys" }],
+  icons: {
+    icon: "/favicon.png",
+    apple: "/favicon.png",
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
