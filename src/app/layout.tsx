@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { AppProvider } from "@/lib/context";
-
+import { Analytics } from "@vercel/analytics/react"
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
@@ -23,6 +23,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <AppProvider>
           {children}
         </AppProvider>
+
+        <Analytics />
       </body>
     </html>
   );
