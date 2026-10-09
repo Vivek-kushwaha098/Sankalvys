@@ -17,6 +17,8 @@ import {
 import { useApp } from '@/lib/context';
 import { getDailyQuote } from '@/lib/constants';
 import Link from 'next/link';
+import { auth } from '@/lib/firebaseConfig';
+import { RecaptchaVerifier, signInWithPhoneNumber, ConfirmationResult } from 'firebase/auth';
 
 type LoginMethod = 'email' | 'phone';
 type Step = 'identify' | 'otp' | 'loading' | 'success';
@@ -34,6 +36,7 @@ export default function LoginPage() {
   const [generatedOtp, setGeneratedOtp] = useState('');
   const [otpTimer, setOtpTimer] = useState(30);
   const [canResend, setCanResend] = useState(false);
+  const [confirmationResult, setConfirmationResult] = useState<ConfirmationResult | null>(null);
   const otpRefs = useRef<(HTMLInputElement | null)[]>([]);
   const { login, settings, updateSettings } = useApp();
   const router = useRouter();
@@ -55,7 +58,7 @@ export default function LoginPage() {
     return () => clearInterval(timer);
   }, [step, otpTimer]);
 
-  const handleIdentifierSubmit = (e: React.FormEvent) => {
+  const handleIdentifierSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
 
@@ -76,22 +79,45 @@ export default function LoginPage() {
     }
 
     if (method === 'phone' && !validatePhone(val)) {
-      setError('Please enter a valid phone number');
+      setError('Please enter a valid phone number (e.g., +1234567890)');
       return;
     }
 
     setDetectedMethod(method);
 
-    // Generate OTP and move to verification
-    const newOtp = generateOTP();
-    setGeneratedOtp(newOtp);
-    setOtpTimer(30);
-    setCanResend(false);
-    setOtp(['', '', '', '', '', '']);
-    setStep('otp');
+    if (method === 'phone') {
+      if (!auth) {
+        setError('Firebase is not configured. Please add your API key to .env.local');
+        return;
+      }
 
-    // In development, log OTP to console for testing
-    console.log(`[Sankalvys] Your OTP is: ${newOtp}`);
+      try {
+        if (!(window as any).recaptchaVerifier) {
+          (window as any).recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+            size: 'invisible',
+          });
+        }
+        const confirmation = await signInWithPhoneNumber(auth, val, (window as any).recaptchaVerifier);
+        setConfirmationResult(confirmation);
+        
+        setOtpTimer(30);
+        setCanResend(false);
+        setOtp(['', '', '', '', '', '']);
+        setStep('otp');
+      } catch (err: any) {
+        console.error("Error sending OTP:", err);
+        setError(err.message || 'Failed to send OTP. Ensure the number includes the country code.');
+      }
+    } else {
+      // Mock email verification
+      const newOtp = generateOTP();
+      setGeneratedOtp(newOtp);
+      setOtpTimer(30);
+      setCanResend(false);
+      setOtp(['', '', '', '', '', '']);
+      setStep('otp');
+      console.log(`[Sankalvys] Mock Email OTP is: ${newOtp}`);
+    }
   };
 
   const handleOtpChange = (index: number, value: string) => {
@@ -126,18 +152,31 @@ export default function LoginPage() {
     }
   };
 
-  const handleVerifyOtp = useCallback(() => {
+  const handleVerifyOtp = useCallback(async () => {
     const enteredOtp = otp.join('');
     if (enteredOtp.length !== 6) {
       setError('Please enter the complete 6-digit code');
       return;
     }
 
-    if (enteredOtp !== generatedOtp) {
-      setError('Invalid verification code. Please try again.');
-      setOtp(['', '', '', '', '', '']);
-      otpRefs.current[0]?.focus();
-      return;
+    if (detectedMethod === 'phone' && confirmationResult) {
+      try {
+        await confirmationResult.confirm(enteredOtp);
+        setError('');
+      } catch (err: any) {
+        setError('Invalid verification code. Please try again.');
+        setOtp(['', '', '', '', '', '']);
+        otpRefs.current[0]?.focus();
+        return;
+      }
+    } else {
+      // Mock email verification
+      if (enteredOtp !== generatedOtp) {
+        setError('Invalid verification code. Please try again.');
+        setOtp(['', '', '', '', '', '']);
+        otpRefs.current[0]?.focus();
+        return;
+      }
     }
 
     setStep('loading');
@@ -266,6 +305,7 @@ export default function LoginPage() {
                   <Shield size={16} />
                   Send Verification Code
                 </button>
+                <div id="recaptcha-container"></div>
               </form>
 
               <div className="flex items-center gap-3 mt-4">
@@ -281,17 +321,6 @@ export default function LoginPage() {
         {step === 'otp' && (
           <div className="w-full space-y-4 animate-slide-in-right">
             <div className="bg-bg-surface border border-border-subtle rounded-2xl p-6 shadow-card">
-              {/* OTP hint for development */}
-              <div className="bg-sage-muted border border-sage rounded-xl p-3 mb-5">
-                <div className="flex items-center gap-2">
-                  <Shield size={14} className="text-sage" />
-                  <span className="text-[12px] font-medium text-sage">Demo Mode</span>
-                </div>
-                <p className="text-[12px] text-sage mt-1">
-                  Your code is: <span className="font-mono font-bold tracking-wider">{generatedOtp}</span>
-                </p>
-              </div>
-
               {/* OTP Input Grid */}
               <div className="flex justify-center gap-2.5 mb-5">
                 {otp.map((digit, i) => (
